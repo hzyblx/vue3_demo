@@ -1,15 +1,16 @@
 <template>
   <div class="layout_container">
-    <div class="layout_slider" :class="{ foldSlider: fold }">
+    <div class="layout_slider">
       <Logo></Logo>
-      <el-menu
-        background-color="#001529"
-        text-color="white"
-        :default-active="$route.path"
-        :collapse="fold"
-      >
-        <Menu :menuList="userStore.menuRoutes"></Menu>
-      </el-menu>
+      <el-scrollbar class="scrollbar">
+        <el-menu
+          background-color="#001529"
+          text-color="white"
+          :default-active="$route.path"
+          :collapse="fold"
+        >
+          <Menu :menuList="userStore.menuRoutes"></Menu> </el-menu
+      ></el-scrollbar>
     </div>
     <div class="layout_tabbar" :class="{ foldSlider: fold }">
       <Tabbar></Tabbar>
@@ -19,20 +20,20 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue'
-import Logo from '@/layout/logo/index.vue'
-import Menu from '@/layout/menu/index.vue'
-import Main from '@/layout/main/index.vue'
-import Tabbar from './tabbar/index.vue'
-import useUserStore from '@/store/modules/user'
-import useLayoutSettingStore from '@/store/modules/setting'
+import { toRefs } from "vue";
+import Logo from "@/layout/logo/index.vue";
+import Menu from "@/layout/menu/index.vue";
+import Main from "@/layout/main/index.vue";
+import Tabbar from "./tabbar/index.vue";
+import useUserStore from "@/store/modules/user";
+import useLayoutSettingStore from "@/store/modules/setting";
 
 defineOptions({
-  name: 'Layout',
-})
-let userStore = useUserStore()
-let LayoutSettingStore = useLayoutSettingStore()
-let { fold } = toRefs(LayoutSettingStore)
+  name: "Layout",
+});
+let userStore = useUserStore();
+let LayoutSettingStore = useLayoutSettingStore();
+let { fold } = toRefs(LayoutSettingStore);
 </script>
 
 <style scoped lang="scss">
@@ -48,14 +49,9 @@ let { fold } = toRefs(LayoutSettingStore)
     .scrollbar {
       width: 100%;
       height: calc(100vh - $base-menu-logo-height);
-    }
-    .el-menu {
-      border-right: none;
-    }
-
-    // 引用父类
-    &.foldSlider {
-      width: $base-menu-min-width;
+      .el-menu {
+        border-right: none;
+      }
     }
   }
   .layout_tabbar {
@@ -65,6 +61,7 @@ let { fold } = toRefs(LayoutSettingStore)
     width: calc(100% - $base-menu-width);
     height: $base-tabbar-height;
     transition: all 0.3s;
+    background-color: white;
     // background-image: linear-gradient(to right, white, black, white);
     &.foldSlider {
       width: calc(100vw - $base-menu-min-width);
