@@ -37,33 +37,33 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
-import useLayoutSettingStore from '@/store/modules/setting'
-import useUserStore from '@/store/modules/user'
+import { useRouter, useRoute } from "vue-router";
+import useLayoutSettingStore from "@/store/modules/setting";
+import useUserStore from "@/store/modules/user";
 
 // import { ref } from 'value'
 defineOptions({
-  name: 'Settings',
-})
-let LayoutSettingStore = useLayoutSettingStore()
-let userStore = useUserStore()
-let $router = useRouter()
-let $route = useRoute()
+  name: "Settings",
+});
+let LayoutSettingStore = useLayoutSettingStore();
+let userStore = useUserStore();
+let $router = useRouter();
+let $route = useRoute();
 function getRefresh() {
-  LayoutSettingStore.refresh = !LayoutSettingStore.refresh
+  LayoutSettingStore.refresh = !LayoutSettingStore.refresh;
 }
 function fullScreen() {
-  console.log(document.fullscreenElement)
-  let full = document.fullscreenElement
+  console.log(document.fullscreenElement);
+  let full = document.fullscreenElement;
   if (!full) {
-    document.documentElement.requestFullscreen()
+    document.documentElement.requestFullscreen();
   } else {
-    document.exitFullscreen()
+    document.exitFullscreen();
   }
 }
-function logout() {
-  userStore.userLogout()
-  $router.push({ path: '/login', query: { redirect: $route.path } })
+async function logout() {
+  await userStore.userLogout();
+  $router.push({ path: "/login", query: { redirect: $route.path } });
 }
 </script>
 

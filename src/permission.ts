@@ -17,7 +17,6 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   nprogress.start();
   let token = userStore.token;
   let username = userStore.username;
-  console.log(username, "username");
 
   // 有token->已登录
   if (token) {
@@ -40,7 +39,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
         } catch (error) {
           // token失效
           // 退出登录
-          userStore.userLogout();
+          await userStore.userLogout();
           // 回到登录页重新登录
           next({ path: "/login", query: { redirect: to.path } });
         }
@@ -58,8 +57,6 @@ router.beforeEach(async (to: any, from: any, next: any) => {
 });
 
 router.afterEach((to: any, from: any, next: any) => {
-  console.log(to, "to");
-
   document.title = setting.title + "-" + to.meta.title;
   nprogress.done();
 });
