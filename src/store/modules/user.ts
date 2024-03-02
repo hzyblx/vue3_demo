@@ -1,14 +1,14 @@
 // 创建用户相关的小仓库
 import { defineStore } from "pinia";
-// 引入接口
-import type { LoginResponse } from "@/api/user/type";
+// 类型接口
+import type { loginResonseData, userInfoResponseData } from "@/api/user/type";
 // 引入数据类型
 import type { UserState } from "@/store/types/userState";
 // 引入本地存储token方法
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from "@/utils/token";
 // 引入路由(常量)
 import { constantRoute } from "@/router/route.ts";
-import { reqUserInfo } from "@/api/user";
+import { reqUserInfo, reqLogout } from "@/api/user";
 let useUserStore = defineStore("User", {
   state(): UserState {
     return {
@@ -19,26 +19,32 @@ let useUserStore = defineStore("User", {
     };
   },
   actions: {
-    userLogin(data: LoginResponse) {
-      this.token = data.data.token;
+    userLogin(res: loginResonseData) {
+      this.token = res.data;
       SET_TOKEN(this.token);
     },
     async userInfo() {
-      let res = await reqUserInfo();
+      let res: userInfoResponseData = await reqUserInfo();
       if (res.code == 200) {
-        this.username = res.data.checkUser.username;
-        this.avatar = res.data.checkUser.avatar;
+        this.username = res.data.name;
+        this.avatar = res.data.avater;
 
         return "ok";
       } else {
-        return Promise.reject("获取用户信息失败");
+        return Promise.reject(new Error(res.message));
       }
     },
-    userLogout() {
-      this.token = "";
-      this.username = "";
-      this.avatar = "";
-      REMOVE_TOKEN();
+    async userLogout() {
+      let res = await reqLogout();
+      if (res.code == 200) {
+        this.token = "";
+        this.username = "";
+        this.avatar = "";
+        REMOVE_TOKEN();
+        return "ok";
+      } else {
+        return Promise.reject(new Error(res.message));
+      }
     },
   },
   getters: {},
