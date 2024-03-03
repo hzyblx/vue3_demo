@@ -2,7 +2,7 @@
   <div>
     <el-card class="box-card">
       <!-- 卡片顶部按钮 -->
-      <el-button type="primary" size="default" icon="Plus" @click=""
+      <el-button type="primary" size="default" icon="Plus" @click="addTrademark"
         >添加品牌</el-button
       >
       <!-- 表格 -->
@@ -30,7 +30,7 @@
             <el-button
               type="primary"
               size="small"
-              @click=""
+              @click="updateTrademark"
               icon="Edit"
             ></el-button>
             <el-button
@@ -55,6 +55,10 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <Dialog
+      v-model:dialogFormVisible="dialogFormVisible"
+      :title="dialogTitle"
+    ></Dialog>
   </div>
 </template>
 
@@ -62,7 +66,11 @@
 import { ref, onMounted } from "vue";
 import { reqHasTradeMark } from "@/api/product/trademark";
 import { Records, TradeMarkResponseData } from "@/api/product/trademark/type";
-
+import Dialog from "@/views/product/trademark/dialog.vue";
+// 对话框展示
+let dialogFormVisible = ref<boolean>(false);
+// 对话框标题
+let dialogTitle = ref<string>("111");
 // 表格数据
 let tableData = ref<Records>([]);
 // 当前页
@@ -97,6 +105,14 @@ async function getTradeMark() {
     tableData.value = res.data.records;
     totalPage.value = res.data.total;
   }
+}
+// 添加品牌按钮回调
+function addTrademark() {
+  dialogFormVisible.value = true;
+}
+// 修改品牌
+function updateTrademark() {
+  dialogFormVisible.value = true;
 }
 onMounted(() => {
   getTradeMark();
