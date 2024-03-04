@@ -27,7 +27,7 @@ let useUserStore = defineStore("User", {
       let res: userInfoResponseData = await reqUserInfo();
       if (res.code == 200) {
         this.username = res.data.name;
-        this.avatar = res.data.avater;
+        this.avatar = res.data.avatar;
 
         return "ok";
       } else {
