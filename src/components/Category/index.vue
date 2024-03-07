@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { onMounted } from "vue";
 // 引入商品分类仓库
 import useCategoryStore from "@/store/modules/category";
 let categoryStore = useCategoryStore();
