@@ -13,7 +13,7 @@ nprogress.configure({ showSpinner: false });
 let userStore = useUserStore(pinia);
 
 // 前置首位
-router.beforeEach(async (to: any, from: any, next: any) => {
+router.beforeEach(async (to: any, _from: any, next: any) => {
   nprogress.start();
   let token = userStore.token;
   let username = userStore.username;
@@ -56,7 +56,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   }
 });
 
-router.afterEach((to: any, from: any, next: any) => {
+router.afterEach((to: any, _from: any, _next: any) => {
   document.title = setting.title + "-" + to.meta.title;
   nprogress.done();
 });

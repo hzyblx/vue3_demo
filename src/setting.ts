@@ -1,5 +1,5 @@
 export default {
-  title: '硅谷甄选',
-  logoUrl: '/public/logo.svg',
+  title: "只会cv",
+  logoUrl: new URL("./assets/logo.svg", import.meta.url).href,
   showLogo: true,
-}
+};
