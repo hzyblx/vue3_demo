@@ -7,10 +7,11 @@
 
 <script setup lang="ts">
 // 引入存放logo路径和标题
-import setting from '@/setting.ts'
+import setting from "@/setting.ts";
+
 defineOptions({
-  name: 'Logo',
-})
+  name: "Logo",
+});
 </script>
 
 <style scoped lang="scss">

@@ -99,8 +99,6 @@ async function userLogin() {
       title: `Hi,${getTime()}好`,
     });
   } else {
-    console.log(result);
-
     ElNotification({ type: "error", message: result.data });
   }
 }

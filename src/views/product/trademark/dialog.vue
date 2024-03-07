@@ -81,7 +81,7 @@ let trademarkParams = reactive<TradeMark>({
   logoUrl: "",
 });
 // 品牌名称校验
-const validateTmName = (rule: any, value: any, callback: any) => {
+const validateTmName = (_rule: any, value: any, callback: any) => {
   if (value.trim().length >= 2 && value.trim().length <= 10) {
     callback();
   } else {
@@ -89,7 +89,7 @@ const validateTmName = (rule: any, value: any, callback: any) => {
   }
 };
 // 品牌Logo校验
-const validateLogo = (rule: any, value: any, callback: any) => {
+const validateLogo = (_rule: any, value: any, callback: any) => {
   if (value) {
     callback();
   } else {

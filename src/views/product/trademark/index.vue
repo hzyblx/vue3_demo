@@ -17,7 +17,7 @@
         <el-table-column prop="tmName" label="品牌名称" align="center">
         </el-table-column>
         <el-table-column prop="date" label="品牌logo" align="center">
-          <template #="{ row, $index }">
+          <template #="{ row }">
             <img
               :src="row.logoUrl"
               onerror="this.src='/public/logo.svg'"
