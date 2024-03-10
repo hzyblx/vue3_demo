@@ -40,12 +40,23 @@
                 size="small"
                 @click="EditAttr(row)"
               ></el-button>
-              <el-button
-                icon="Delete"
-                type="primary"
-                size="small"
-                @click="DeleteAttr(row)"
-              ></el-button>
+              <el-popconfirm
+                width="220"
+                confirm-button-text="删除"
+                cancel-button-text="取消"
+                :title="`确定删除${row.attrName}吗?`"
+                confirm-button-type="success"
+                cancel-button-type="danger"
+                @confirm="DeleteAttrList(row.id)"
+              >
+                <template #reference>
+                  <el-button
+                    icon="Delete"
+                    type="primary"
+                    size="small"
+                  ></el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -75,15 +86,17 @@
           ></el-table-column
           ><el-table-column label="属性值" prop>
             <template #="{ row, $index }">
+              <div v-if="!row.flag" @click="toEdit(row, $index)">
+                {{ row.valueName }}
+              </div>
               <el-input
-                v-if="!row.lookFlag"
+                v-else
                 :ref="(vc: any) => (inputArr[$index] = vc)"
                 v-model="row.valueName"
                 placeholder="请输入属性名称"
                 @blur="toLook(row, $index)"
               >
               </el-input>
-              <div v-else @click="toEdit(row, $index)">{{ row.valueName }}</div>
             </template> </el-table-column
           ><el-table-column
             label="操作"
@@ -111,9 +124,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch, nextTick } from "vue";
+import { reactive, ref, watch, nextTick, onBeforeUnmount } from "vue";
 import useCategoryStore from "@/store/modules/category";
-import { reqAttr, reqAddOrUpdateAttr } from "@/api/product/attr";
+import { reqAttr, reqAddOrUpdateAttr, reqDeleteAttr } from "@/api/product/attr";
 import type {
   AttrResponseData,
   attrDataObj,
@@ -159,22 +172,16 @@ async function getAttr() {
   }
 }
 
-// 编辑属性接口
-async function addOrUpdateAttr(row: attrDataObj) {
-  let res = await reqAddOrUpdateAttr(row);
-}
-
 // 新增属性
 function addAttr() {
   showAllFlag.value = false;
   Object.assign(attrParams, {
     id: "", // 已有属性ID
     attrName: "", // 属性名称
-    categoryId: "", //三级分类ID
-    categoryLevel: categoryStore.c3Id,
+    categoryId: categoryStore.c3Id, //三级分类ID
+    categoryLevel: 3,
     attrValueList: [],
   });
-  // 保存三级分类ID
 }
 
 // 保存属性
@@ -192,14 +199,26 @@ async function saveAttrValue() {
 
 // 新增属性值列表
 function addAttrValue() {
-  attrParams.attrValueList.push({ valueName: "", lookFlag: false });
+  attrParams.attrValueList.push({ valueName: "", flag: true });
   // 聚焦
   nextTick(() => {
     inputArr.value[attrParams.attrValueList.length - 1].focus();
   });
 }
 
-// 删除属性
+// 删除属性列表
+async function DeleteAttrList(id: number) {
+  let res = await reqDeleteAttr(id);
+  if (res.code == 200) {
+    ElMessage.success("删除成功");
+    // 重新获取列表数据
+    getAttr();
+  } else {
+    ElMessage.error("删除失败");
+  }
+}
+
+// 删除属性值
 async function DeleteAttr(index: number) {
   attrParams.attrValueList.splice(index, 1);
 }
@@ -207,7 +226,8 @@ async function DeleteAttr(index: number) {
 // 编辑属性
 async function EditAttr(row: attrDataObj) {
   showAllFlag.value = false;
-  addOrUpdateAttr(row);
+  // 采用JSON实现深拷贝
+  Object.assign(attrParams, JSON.parse(JSON.stringify(row)));
 }
 
 // 取消编辑
@@ -237,18 +257,24 @@ function toLook(row: AttrValueObj, index: number) {
     ElMessage.error("属性值不能重复");
     return;
   }
-  row.lookFlag = true;
+  row.flag = false;
 }
 
 // 变成编辑模式
 function toEdit(row: AttrValueObj, index: number) {
-  row.lookFlag = false;
+  row.flag = true;
   // 由于是v-if显示隐藏输入框,导致元素会更新,需要采用nextTick才能获取到元素
   nextTick(() => {
     // 聚焦
     inputArr.value[index].focus();
   });
 }
+
+// 在销毁前
+onBeforeUnmount(() => {
+  // 清空仓库
+  categoryStore.$reset();
+});
 </script>
 
 <style scoped></style>

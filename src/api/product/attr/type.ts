@@ -23,7 +23,7 @@ export interface AttrValueObj {
   id?: number | string;
   valueName: string;
   attrId?: number | string;
-  lookFlag?: boolean;
+  flag?: boolean;
 }
 
 // 商品属性data对象

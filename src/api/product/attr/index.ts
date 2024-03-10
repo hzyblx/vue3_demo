@@ -14,6 +14,8 @@ enum API {
   ATTR_URL = "/admin/product/attrInfoList/",
   // 编辑或新增商品属性
   EDIT_ADD_ATTR_URL = "/admin/product/saveAttrInfo",
+  // 删除商品属性
+  DELETE_ATTR_URL = "/admin/product/deleteAttr/",
 }
 
 // 获取一级分类接口
@@ -37,3 +39,5 @@ export const reqAttr = (
 export const reqAddOrUpdateAttr = (data: attrDataObj) =>
   request.post<any, any>(API.EDIT_ADD_ATTR_URL, data);
 // 删除商品属性
+export const reqDeleteAttr = (id: number) =>
+  request.delete<any, any>(API.DELETE_ATTR_URL + id);
