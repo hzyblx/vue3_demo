@@ -123,7 +123,7 @@ watch(
 // 获取Spu列表
 async function getSpuList(type: string = "修改") {
   if (type == "新增") {
-    currentPage.value = Math.ceil((total.value + 1) / pageSize.value);
+    currentPage.value = 1;
   } else if (type == "删除") {
     currentPage.value = Math.ceil((total.value - 1) / pageSize.value);
   }
@@ -141,6 +141,7 @@ async function getSpuList(type: string = "修改") {
 // 添加Spu
 function addSpu() {
   screen.value = 1;
+  spuForm.value.initAddSpuForm(categoryStore.c3Id);
 }
 // 添加SKU
 function addSKU(row: any) {
@@ -150,15 +151,17 @@ function addSKU(row: any) {
 function updateSPU(row: SpuRecords) {
   screen.value = 1;
   // 子组件方法
-  spuForm.value.initHasSpuData(row);
+  let data = JSON.parse(JSON.stringify(row));
+  spuForm.value.initHasSpuData(data);
 }
 // 查看SKU
 function readSKU(row: any) {}
 // 删除SPU
 function deleteSPU(row: any) {}
 // SPU组件取消回调
-function spuCancle(val: number) {
+function spuCancle(val: number, type: string = "") {
   screen.value = val;
+  if (type) getSpuList(type);
 }
 
 // 在销毁前

@@ -18,6 +18,10 @@ enum API {
   SALE_ATTR_URL = "/admin/product/spuSaleAttrList/",
   // 根据商品基础属性
   BASE_ATTR_URL = "/admin/product/baseSaleAttrList",
+  // 添加spu
+  ADD_SPU_URL = "/admin/product/saveSpuInfo",
+  // 修改spu
+  UPDATE_SPU_URL = "/admin/product/updateSpuInfo",
 }
 
 // 获取已有的SPU
@@ -45,3 +49,12 @@ export const reqGetSaleAttrList = (id: number) =>
 // 根据SPU的ID获取商品基础属性
 export const reqGetBaseAttrList = () =>
   request.get<any, SpuBaseAttrResponseData>(API.BASE_ATTR_URL);
+
+// 更新或修改SPU
+export const reqAddOrUpdateSpu = (data: any) => {
+  if (data.id) {
+    return request.post<any, any>(API.UPDATE_SPU_URL, data);
+  } else {
+    return request.post<any, any>(API.ADD_SPU_URL, data);
+  }
+};

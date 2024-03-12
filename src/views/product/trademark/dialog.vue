@@ -123,7 +123,7 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (response) => {
 const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
   let typeArr = ["image/png", "image/jpg", "image/gif"];
   if (typeArr.indexOf(rawFile.type) == -1) {
-    ElMessage.error("上传格式务必未jpg||png||gif");
+    ElMessage.error("上传格式务必为jpg||png||gif");
     return false;
   } else if (rawFile.size / 1024 / 1024 > 4) {
     ElMessage.error("文件大小不能大于4MB!");

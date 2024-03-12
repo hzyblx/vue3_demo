@@ -5,10 +5,12 @@ export interface ResponseData {
 }
 // 图片对象
 export interface SpuImage {
-  id: number;
-  imgName: string;
-  imgUrl: string;
-  spuId: number;
+  id?: number;
+  spuId?: number;
+  imgName?: string;
+  imgUrl?: string;
+  name?: string;
+  url?: string;
 }
 // 品牌
 export interface Trademark {
@@ -19,16 +21,18 @@ export interface Trademark {
 // SPU商品销售属性对象
 export interface SpuSaleAttrValue {
   id?: number;
+  spuId?: number;
+  isChecked?: string;
   baseSaleAttrId: number;
-  isChecked: string;
-  saleAttrName: string;
+  saleAttrName?: string;
   saleAttrValueName: string;
-  spuId: number;
 }
 // SPU销售属性整体数组
 export interface SpuSaleAttr {
   id?: number;
-  spuId: number;
+  spuId?: number;
+  flag?: boolean;
+  input?: string;
   baseSaleAttrId: number;
   saleAttrName: string;
   spuSaleAttrValueList: SpuSaleAttrValue[];
@@ -40,13 +44,13 @@ export interface SpuBaseAttrValue {
 }
 // SPU整体Record对象
 export interface SpuRecords {
-  id: number;
+  id?: number | null; //SPU ID
+  tmId: number | null; //品牌ID
   category3Id: number;
   description: string;
   spuName: string;
-  spuPosterList: null;
-  spuSaleAttrList: null;
-  spuImageList: null;
+  spuSaleAttrList: null | SpuSaleAttr[];
+  spuImageList: null | SpuImage[];
 }
 // Spu返回data
 export interface SpuData {
