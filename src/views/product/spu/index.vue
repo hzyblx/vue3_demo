@@ -43,12 +43,21 @@
                 title="查看SKU列表"
                 @click="readSKU(row)"
               ></el-button>
-              <el-button
-                type="danger"
-                icon="Delete"
-                title="删除SPU"
-                @click="deleteSPU()"
-              ></el-button>
+              <el-popconfirm
+                width="220"
+                confirm-button-text="OK"
+                cancel-button-text="不了"
+                icon="InfoFilled"
+                icon-color="#626AEF"
+                :title="`确定要删除${row.spuName}吗？`"
+                @confirm="deleteSPU(row)"
+                confirm-button-type="success"
+                cancel-button-type="danger"
+              >
+                <template #reference>
+                  <el-button type="primary" icon="Delete"> </el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -101,7 +110,11 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount, reactive } from "vue";
 import useCategoryStore from "@/store/modules/category"; // 商品分类仓库
-import { reqGetSkuDetail, reqHasSPU } from "@/api/product/spu/index"; //SPU接口
+import {
+  reqGetSkuDetail,
+  reqHasSPU,
+  reqDeleteSpu,
+} from "@/api/product/spu/index"; //SPU接口
 import type {
   SpuRecords,
   SpuResonseData,
@@ -109,8 +122,9 @@ import type {
 } from "@/api/product/spu/type";
 import SkuForm from "@/views/product/spu/skuForm.vue";
 import SpuForm from "@/views/product/spu/spuForm.vue";
+import { ElMessage } from "element-plus";
 let categoryStore = useCategoryStore();
-let screen = ref<number>(2); //0展示SPU列表   1展示添加或者修改SPU  2展示添加SKU
+let screen = ref<number>(0); //0展示SPU列表   1展示添加或者修改SPU  2展示添加SKU
 // 当前页
 let currentPage = ref<number>(1);
 // 页大小
@@ -155,7 +169,10 @@ async function getSpuList(type: string = "修改") {
   if (type == "新增") {
     currentPage.value = 1;
   } else if (type == "删除") {
-    currentPage.value = Math.ceil((total.value - 1) / pageSize.value);
+    // 根据新页数和旧页数进行对比，小于则返回前一页
+    let newTotalPage = Math.ceil((total.value - 1) / pageSize.value);
+    if (newTotalPage < currentPage.value)
+      currentPage.value = Math.max(newTotalPage, 1);
   }
   const { c3Id } = categoryStore;
   let res: SpuResonseData = await reqHasSPU(
@@ -203,7 +220,15 @@ async function readSKU(row: SpuRecords) {
   }
 }
 // 删除SPU
-function deleteSPU() {}
+async function deleteSPU(row: SpuRecords) {
+  let res: any = await reqDeleteSpu(row.id as number);
+  if (res.code == 200) {
+    ElMessage.success("删除SPU成功");
+    getSpuList("删除");
+  } else {
+    ElMessage.error("删除SPU失败");
+  }
+}
 // SPU组件取消回调
 function spuCancle(val: number, type: string = "") {
   screen.value = val;
