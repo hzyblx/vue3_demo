@@ -41,13 +41,13 @@
                 type="info"
                 icon="View"
                 title="查看SKU列表"
-                @click="readSKU(row)"
+                @click="readSKU()"
               ></el-button>
               <el-button
                 type="danger"
                 icon="Delete"
                 title="删除SPU"
-                @click="deleteSPU(row)"
+                @click="deleteSPU()"
               ></el-button>
             </template>
           </el-table-column>
@@ -71,7 +71,11 @@
         @change-screen="spuCancle"
       ></SpuForm>
       <!-- 添加SKU -->
-      <SkuForm v-show="screen == 2"></SkuForm>
+      <SkuForm
+        ref="skuForm"
+        v-show="screen == 2"
+        @change-screen="skuCancle"
+      ></SkuForm>
     </el-card>
   </div>
 </template>
@@ -84,7 +88,7 @@ import type { SpuRecords, SpuResonseData } from "@/api/product/spu/type";
 import SkuForm from "@/views/product/spu/skuForm.vue";
 import SpuForm from "@/views/product/spu/spuForm.vue";
 let categoryStore = useCategoryStore();
-let screen = ref<number>(1); //0展示SPU列表   1展示添加或者修改SPU  2展示添加SKU
+let screen = ref<number>(2); //0展示SPU列表   1展示添加或者修改SPU  2展示添加SKU
 // 当前页
 let currentPage = ref<number>(1);
 // 页大小
@@ -99,6 +103,7 @@ let tableIndex = (index: number) => {
 };
 // 获取组件spuForm实例
 let spuForm = ref<any>();
+let skuForm = ref<any>();
 
 // 每页大小回调
 let handleSizeChange = (val: number) => {
@@ -144,8 +149,16 @@ function addSpu() {
   spuForm.value.initAddSpuForm(categoryStore.c3Id);
 }
 // 添加SKU
-function addSKU(row: any) {
+function addSKU(row: SpuRecords) {
   screen.value = 2;
+  console.log(row);
+  let params = {
+    c1Id: categoryStore.c1Id,
+    c2Id: categoryStore.c2Id,
+    c3Id: categoryStore.c3Id,
+    spu: row,
+  };
+  skuForm.value.initSkuForm(params);
 }
 // 修改SPU
 function updateSPU(row: SpuRecords) {
@@ -155,13 +168,17 @@ function updateSPU(row: SpuRecords) {
   spuForm.value.initHasSpuData(data);
 }
 // 查看SKU
-function readSKU(row: any) {}
+function readSKU() {}
 // 删除SPU
-function deleteSPU(row: any) {}
+function deleteSPU() {}
 // SPU组件取消回调
 function spuCancle(val: number, type: string = "") {
   screen.value = val;
   if (type) getSpuList(type);
+}
+// SKU组件取消回调
+function skuCancle(val: number) {
+  screen.value = val;
 }
 
 // 在销毁前

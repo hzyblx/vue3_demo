@@ -1,131 +1,56 @@
 <template>
   <div>
     <el-form label-width="120px">
-      <el-form-item label="SPU名称" placeholder="请你输入SPU名称"
-        ><el-input v-model="spuParams.spuName"></el-input
-      ></el-form-item>
-      <el-form-item label="SPU品牌"
-        ><el-select style="width: 240px" v-model="spuParams.tmId"
-          ><el-option
-            v-for="trade in trademarkList"
-            :label="trade.tmName"
-            :value="trade.id"
-            :key="trade.id"
-          ></el-option></el-select
-      ></el-form-item>
-      <el-form-item label="SPU描述"
-        ><el-input
-          v-model="spuParams.description"
-          type="textarea"
-          placeholder="请你输入SPU描述"
-        ></el-input
-      ></el-form-item>
+      <el-form-item label="SPU名称" placeholder="请你输入SPU名称"><el-input
+          v-model="spuParams.spuName"></el-input></el-form-item>
+      <el-form-item label="SPU品牌"><el-select style="width: 240px" v-model="spuParams.tmId"><el-option
+            v-for="trade in trademarkList" :label="trade.tmName" :value="trade.id"
+            :key="trade.id"></el-option></el-select></el-form-item>
+      <el-form-item label="SPU描述"><el-input v-model="spuParams.description" type="textarea"
+          placeholder="请你输入SPU描述"></el-input></el-form-item>
       <el-form-item label="SPU照片">
-        <el-upload
-          v-model:file-list="imageList"
-          action="/api/admin/product/fileUpload"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :before-upload="beforeUpload"
-        >
-          <el-icon><Plus /></el-icon>
+        <el-upload v-model:file-list="imageList" action="/api/admin/product/fileUpload" list-type="picture-card"
+          :on-preview="handlePictureCardPreview" :before-upload="beforeUpload">
+          <el-icon>
+            <Plus />
+          </el-icon>
         </el-upload>
 
         <el-dialog v-model="dialogVisible">
-          <img
-            w-full
-            :src="dialogImageUrl"
-            alt="Preview Image"
-            style="width: 100%; height: 100%"
-          />
+          <img w-full :src="dialogImageUrl" alt="Preview Image" style="width: 100%; height: 100%" />
         </el-dialog>
       </el-form-item>
-      <el-form-item label="SPU销售属性"
-        ><el-select
-          style="width: 240px"
-          v-model="selectSaleAttr"
-          :placeholder="`还未选择${unSelectedAttr.length}项`"
-          ><el-option
-            v-for="base in unSelectedAttr"
-            :value="`${base.id}:${base.name}`"
-            :key="base.id"
-            :label="base.name"
-          ></el-option
-        ></el-select>
-        <el-button
-          icon="Plus"
-          type="primary"
-          style="margin-left: 10px"
-          @click="addSaleAttr"
-          :disabled="!selectSaleAttr"
-          >添加销售属性</el-button
-        >
+      <el-form-item label="SPU销售属性"><el-select style="width: 240px" v-model="selectSaleAttr"
+          :placeholder="`还未选择${unSelectedAttr.length}项`"><el-option v-for="base in unSelectedAttr"
+            :value="`${base.id}:${base.name}`" :key="base.id" :label="base.name"></el-option></el-select>
+        <el-button icon="Plus" type="primary" style="margin-left: 10px" @click="addSaleAttr"
+          :disabled="!selectSaleAttr">添加销售属性</el-button>
         <el-table border style="margin: 10px 0" :data="saleAttrList">
-          <el-table-column
-            label="序号"
-            type="index"
-            align="center"
-            width="80px"
-          ></el-table-column>
-          <el-table-column
-            label="销售属性名称"
-            width="120px"
-            prop="saleAttrName"
-          >
+          <el-table-column label="序号" type="index" align="center" width="80px"></el-table-column>
+          <el-table-column label="销售属性名称" width="120px" prop="saleAttrName">
           </el-table-column>
           <el-table-column label="销售属性值" prop="saleAttrValueName">
             <template #="{ row }">
-              <el-tag
-                v-for="(tag, $index) in row.spuSaleAttrValueList"
-                :key="tag.id"
-                closable
-                :disable-transitions="false"
-                @close="handleClose(row, $index)"
-                style="margin-right: 5px"
-              >
+              <el-tag v-for="(tag, $index) in row.spuSaleAttrValueList" :key="tag.id" closable
+                :disable-transitions="false" @close="handleClose(row, $index)" style="margin-right: 5px">
                 {{ tag.saleAttrValueName }}
               </el-tag>
-              <el-input
-                v-if="row.flag"
-                ref="InputRef"
-                v-model="row.input"
-                class="w-20"
-                size="small"
-                style="width: 100px"
-                @keyup.enter="handleInputConfirm(row)"
-                @blur="handleInputConfirm(row)"
-              />
-              <el-button
-                v-else
-                class="button-new-tag"
-                size="small"
-                @click="showInput(row)"
-              >
+              <el-input v-if="row.flag" ref="InputRef" v-model="row.input" class="w-20" size="small"
+                style="width: 100px" @keyup.enter="handleInputConfirm(row)" @blur="handleInputConfirm(row)" />
+              <el-button v-else class="button-new-tag" size="small" @click="showInput(row)">
                 +添加
               </el-button>
-            </template></el-table-column
-          >
+            </template></el-table-column>
           <el-table-column label="操作" prop="" width="200px">
             <template #="{ $index }">
-              <el-button
-                size="small"
-                icon="Delete"
-                type="danger"
-                @click="deleteAttrValue($index)"
-                >删除</el-button
-              ></template
-            >
+              <el-button size="small" icon="Delete" type="danger"
+                @click="deleteAttrValue($index)">删除</el-button></template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <el-form-item>
         <el-button type="info" @click="cancle">取消</el-button>
-        <el-button
-          type="primary"
-          @click="saveInfo"
-          :disabled="!(saleAttrList.length > 0)"
-          >保存</el-button
-        >
+        <el-button type="primary" @click="saveInfo" :disabled="!(saleAttrList.length > 0)">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -133,7 +58,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, computed } from "vue";
-import type { UploadProps, UploadUserFile, UploadRawFile } from "element-plus";
+import type { UploadProps, UploadRawFile } from "element-plus";
 import { ElMessage, ElInput } from "element-plus";
 import type {
   SpuRecords,

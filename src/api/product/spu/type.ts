@@ -86,3 +86,27 @@ export interface SpuSaleAttrResponseData extends ResponseData {
 export interface SpuBaseAttrResponseData extends ResponseData {
   data: SpuBaseAttrValue[];
 }
+
+interface skuAttrValueList {
+  attrId: string | number;
+  valueId: string | number;
+}
+
+interface skuSaleAttrValueList {
+  saleAttrId: string | number;
+  saleAttrValueId: string | number;
+}
+
+// 新增SKU入参
+export interface SkuParams {
+  category3Id: string | number;
+  spuId: string | number;
+  tmId: string | number;
+  skuName: string;
+  price: string | number;
+  weight: string | number;
+  skuDesc: string;
+  skuDefaultImg: string;
+  skuAttrValueList?: skuAttrValueList[];
+  skuSaleAttrValueList?: skuSaleAttrValueList[];
+}
