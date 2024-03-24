@@ -25,6 +25,8 @@ enum API {
   UPDATE_SPU_URL = "/admin/product/updateSpuInfo",
   // 新增sku
   ADD_SKU_URL = "/admin/product/saveSkuInfo",
+  // 获取sku详情
+  SKU_INFO_URL = "/admin/product/findBySpuId/",
 }
 
 // 获取已有的SPU
@@ -65,4 +67,9 @@ export const reqAddOrUpdateSpu = (data: any) => {
 // 新增sku
 export const reqAddSku = (data: SkuParams) => {
   return request.post<any, any>(API.ADD_SKU_URL, data);
+};
+
+// 获取sku详情
+export const reqGetSkuDetail = (spuId: number) => {
+  return request.get<any, any>(API.SKU_INFO_URL + spuId);
 };

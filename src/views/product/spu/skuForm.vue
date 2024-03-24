@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-form>
-      <el-form-item label="sku名称">
+    <el-form :rules="rules" :model="skuParams" :inline="true">
+      <el-form-item label="sku名称" prop="skuName">
         <el-input placeholder="SKU名称" v-model="skuParams.skuName"></el-input
       ></el-form-item>
-      <el-form-item label="价格(元)">
+      <el-form-item label="价格(元)" prop="price">
         <el-input placeholder="价格(元)" v-model="skuParams.price"> </el-input>
       </el-form-item>
-      <el-form-item label="重量(克)">
+      <el-form-item label="重量(克)" prop="weight">
         <el-input placeholder="重量(克)" v-model="skuParams.weight"></el-input
       ></el-form-item>
-      <el-form-item label="sku描述">
+      <el-form-item label="sku描述" prop="skuDesc" style="width: 100%">
         <el-input placeholder="sku描述" v-model="skuParams.skuDesc"></el-input
       ></el-form-item>
       <el-form-item label="平台属性">
@@ -25,7 +25,7 @@
                 v-for="attr in item.attrValueList"
                 :key="attr.attrId"
                 :label="attr.valueName"
-                :value="`${item.id}:${attr.attrId}`"
+                :value="`${item.id}:${attr.id}`"
               ></el-option> </el-select
           ></el-form-item>
         </el-form>
@@ -58,7 +58,7 @@
             <template #="{ row }">
               <img
                 :src="row.imgUrl"
-                alt=""
+                alt="图片加载失败"
                 style="width: 100px; height: 100px"
               />
             </template>
@@ -97,8 +97,30 @@ let saleList = ref<any>([]);
 let imgList = ref<any>([]);
 let table = ref<any>();
 let $emit = defineEmits(["changeScreen"]);
-
 const cancel = () => $emit("changeScreen", 0);
+
+// 校验规则
+const rules = reactive<any>({
+  skuName: [
+    { required: true, message: "请输入名称", trigger: "blur" },
+    { min: 3, max: 8, message: "长度为3到8", trigger: "blur" },
+  ],
+  price: [
+    {
+      required: true,
+      message: "请输入价格",
+      trigger: "blur",
+    },
+  ],
+  weight: [
+    {
+      required: true,
+      message: "请输入重量",
+      trigger: "blur",
+    },
+  ],
+  skuDesc: [{ required: true, message: "请输入描述", trigger: "blur" }],
+});
 
 let skuParams = reactive<SkuParams>({
   // 父组件传来的
@@ -126,6 +148,18 @@ const initSkuForm = async ({
   c3Id: number | string;
   spu: SpuRecords;
 }) => {
+  Object.assign(skuParams, {
+    category3Id: "",
+    spuId: "",
+    tmId: "",
+    skuName: "",
+    price: "",
+    weight: "",
+    skuDesc: "",
+    skuDefaultImg: "",
+    skuAttrValueList: [],
+    skuSaleAttrValueList: [],
+  });
   skuParams.category3Id = spu.category3Id;
   skuParams.spuId = spu.id as number;
   skuParams.tmId = spu.tmId as number;
@@ -159,8 +193,8 @@ let save = async () => {
   }, []);
   let saleArr = saleList.value.reduce((prev: any, next: any) => {
     if (next.saleIdAndValueId) {
-      let [saleId, valueId] = next.saleIdAndValueId.split(":");
-      prev.push({ saleId, valueId });
+      let [saleAttrId, saleAttrValueId] = next.saleIdAndValueId.split(":");
+      prev.push({ saleAttrId, saleAttrValueId });
     }
     return prev;
   }, []);

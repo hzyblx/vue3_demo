@@ -110,3 +110,23 @@ export interface SkuParams {
   skuAttrValueList?: skuAttrValueList[];
   skuSaleAttrValueList?: skuSaleAttrValueList[];
 }
+
+// sku详情
+export interface SkuDetailObj {
+  id: number;
+  spuId: number;
+  price: number;
+  skuName: string;
+  skuDesc: string;
+  weight: number;
+  tmId: number;
+  category3Id: number;
+  skuDefaultImg: string;
+  skuAttrValueList?: skuAttrValueList[];
+  skuSaleAttrValueList?: skuSaleAttrValueList[];
+}
+
+// sku详情接口整体
+export interface SkuDetailRespnseData extends ResponseData {
+  data: SkuDetailObj[];
+}

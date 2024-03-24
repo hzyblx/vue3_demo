@@ -41,7 +41,7 @@
                 type="info"
                 icon="View"
                 title="查看SKU列表"
-                @click="readSKU()"
+                @click="readSKU(row)"
               ></el-button>
               <el-button
                 type="danger"
@@ -76,15 +76,37 @@
         v-show="screen == 2"
         @change-screen="skuCancle"
       ></SkuForm>
+      <!--  -->
+      <el-dialog v-model="showSkuDetail" title="Sku详情">
+        <el-table :data="skuList" v-loading="skuDetailLoading" border>
+          <el-table-column prop="skuName" label="名称"></el-table-column>
+          <el-table-column prop="price" label="价格"></el-table-column>
+          <el-table-column prop="weight" label="重量"></el-table-column>
+          <el-table-column prop="skuNamskuDesce" label="描述"></el-table-column>
+          <el-table-column prop="skuName" label="图片">
+            <template #="{ row }">
+              <img
+                :src="row.skuDefaultImg"
+                alt="加载失败"
+                style="height: 100px; width: 100px"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from "vue";
+import { ref, watch, onBeforeUnmount, reactive } from "vue";
 import useCategoryStore from "@/store/modules/category"; // 商品分类仓库
-import { reqHasSPU } from "@/api/product/spu/index"; //SPU接口
-import type { SpuRecords, SpuResonseData } from "@/api/product/spu/type";
+import { reqGetSkuDetail, reqHasSPU } from "@/api/product/spu/index"; //SPU接口
+import type {
+  SpuRecords,
+  SpuResonseData,
+  SkuDetailObj,
+} from "@/api/product/spu/type";
 import SkuForm from "@/views/product/spu/skuForm.vue";
 import SpuForm from "@/views/product/spu/spuForm.vue";
 let categoryStore = useCategoryStore();
@@ -104,7 +126,10 @@ let tableIndex = (index: number) => {
 // 获取组件spuForm实例
 let spuForm = ref<any>();
 let skuForm = ref<any>();
-
+// sku详情列表
+let skuList = reactive<SkuDetailObj[]>([]);
+let showSkuDetail = ref<boolean>(false);
+let skuDetailLoading = ref<boolean>(false);
 // 每页大小回调
 let handleSizeChange = (val: number) => {
   pageSize.value = val;
@@ -168,7 +193,15 @@ function updateSPU(row: SpuRecords) {
   spuForm.value.initHasSpuData(data);
 }
 // 查看SKU
-function readSKU() {}
+async function readSKU(row: SpuRecords) {
+  showSkuDetail.value = true;
+  skuDetailLoading.value = true;
+  let res = await reqGetSkuDetail(row.id as number);
+  skuDetailLoading.value = false;
+  if (res.code == 200) {
+    skuList = res.data;
+  }
+}
 // 删除SPU
 function deleteSPU() {}
 // SPU组件取消回调
